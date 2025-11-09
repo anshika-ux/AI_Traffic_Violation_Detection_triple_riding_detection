@@ -1,176 +1,116 @@
-# Triple Riding Detection System
+# 🏍️ Triple Riding Detection System
 
-A comprehensive computer vision system for detecting triple riding violations (three or more people on a motorcycle) using YOLOv8 object detection. The system processes both images and videos, generates detailed reports, and stores results in MongoDB for persistent storage and analysis.
+[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
+[![YOLOv8](https://img.shields.io/badge/YOLO-v8-green.svg)](https://github.com/ultralytics/ultralytics)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4.4%2B-green.svg)](https://www.mongodb.com/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## 🚀 Features
+An advanced computer vision system designed to automatically detect and report triple riding violations on motorcycles. Built on YOLOv8's state-of-the-art object detection capabilities, this system provides real-time monitoring and automated violation reporting for traffic safety enforcement.
 
-- **Dual Detection Modes**: Process individual images or video files with frame-by-frame analysis
-- **Advanced Detection Algorithm**: Intelligent rider-vehicle grouping using IoU and distance metrics
-- **Violation Classification**: Automatic identification of triple riding violations with confidence scoring
-- **MongoDB Integration**: Persistent storage of detection results with separate collections for images and videos
-- **Rich Annotations**: Visual markers, confidence scores, and violation indicators on output images
-- **Comprehensive Reporting**: CSV reports with detailed statistics and MongoDB queries
-- **Flexible Configuration**: Extensive command-line options for fine-tuning detection parameters
+## 🎯 Key Features
 
-## 📋 Prerequisites
+- **High-Precision Detection**
+  - YOLOv8-powered object detection for accurate rider and vehicle identification
+  - Smart rider-vehicle association using IoU and distance metrics
+  - Configurable confidence thresholds for optimal detection accuracy
 
-- **Python 3.8+**
-- **MongoDB** (local installation or cloud instance)
-- **MongoDB Compass** (optional, for database visualization)
+- **Comprehensive Violation Monitoring**
+  - Automatic detection of triple riding violations
+  - Visual indicators with red boxes for violations
+  - Confidence scoring for reliable violation reporting
 
-### System Dependencies
+- **Robust Data Management**
+  - MongoDB integration for persistent violation records
+  - Detailed CSV reports with violation statistics
+  - Automated image and video frame analysis
+
+- **Advanced Visualization**
+  - Clear violation markers with customizable indicators
+  - Confidence score display options
+  - Direction arrows for enhanced visualization
+  - Compact violation view mode
+
+## �️ System Requirements
+
+### Core Requirements
+- **Python**: Version 3.8 or higher
+- **CUDA**: Optional, for GPU acceleration
+- **Memory**: Minimum 4GB RAM (8GB+ recommended)
+- **Storage**: 500MB for base installation, plus space for image/video storage
+
+### Database Requirements
+- **MongoDB**: Version 4.4 or higher
+  - Local installation or cloud instance (Atlas)
+  - MongoDB Compass (optional, for visual database management)
+
+### Installation Methods
 
 ```bash
-# macOS (with Homebrew)
+# macOS Installation (using Homebrew)
 brew install mongodb/brew/mongodb-community
+brew install python@3.8
 
-# Ubuntu/Debian
-sudo apt-get install mongodb
+# Ubuntu/Debian Installation
+sudo apt-get update
+sudo apt-get install -y mongodb python3.8 python3.8-venv
 
-# Or use Docker
+# Docker Installation (Alternative)
 docker run -d -p 27017:27017 --name mongodb mongo:latest
 ```
 
-## 🛠️ Installation
+## ⚡ Quick Start Guide
 
-### 1. Clone Repository
+### 1. Environment Setup
 ```bash
-git clone <repository-url>
-cd triple-riding-detection
-```
+# Clone the repository
+git clone https://github.com/anshika-ux/Coco_model_triple_riding_detection.git
+cd Coco_model_triple_riding_detection
 
-### 2. Create Virtual Environment
-```bash
+# Create and activate virtual environment
 python3 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-```
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 
-### 3. Install Dependencies
-```bash
+# Install dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. Start MongoDB Service
+### 2. Database Configuration
 ```bash
-# macOS with Homebrew
+# Start MongoDB (macOS)
 brew services start mongodb/brew/mongodb-community
 
-# Linux systemd
+# Start MongoDB (Linux)
 sudo systemctl start mongod
 
-# Or manual start
-mongod --dbpath /usr/local/var/mongodb --logpath /usr/local/var/log/mongodb/mongo.log --fork
+# Verify MongoDB Connection
+mongosh --eval "db.serverStatus()"
 ```
 
-## 📖 Usage
-
-### Image Detection
-
-Process a folder of images and store results in MongoDB:
-
+### 3. Model Setup
 ```bash
-python detect_triple_riding.py \
-  --images datasets/triple_riding/images \
-  --weights yolov8n.pt \
-  --mongodb-uri mongodb://localhost:27017/ \
-  --db-name triple_riding_db \
-  --collection-name detections \
-  --conf 0.3 \
-  --dist-thresh 0.75 \
-  --compact-violation \
-  --show-confidence \
-  --show-arrow \
-  --quiet
+# Download YOLOv8 weights (if not present)
+wget https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt
+
+# Verify model file
+ls -l yolov8n.pt
 ```
+## � Data Management
 
-### Video Detection
+### MongoDB Integration
 
-Process a video file with frame-by-frame analysis:
+The system implements a robust data persistence layer using MongoDB:
 
-```bash
-python detect_video_triple_riding.py \
-  --file datasets/triple_riding/video/test.mp4 \
-  --weights yolov8n.pt \
-  --mongodb-uri mongodb://localhost:27017/ \
-  --db-name triple_riding_db \
-  --collection-name video_detections \
-  --conf 0.3 \
-  --dist-thresh 0.75 \
-  --frame-interval 60 \
-  --compact-violation \
-  --show-confidence \
-  --show-arrow \
-  --quiet
-```
+#### Collection Architecture
+- **Images Collection (`detections`)**
+  - Stores individual image analysis results
+  - Tracks violation statistics and metadata
+  - Links to output files and annotations
 
-### Quick Start Scripts
-
-Use the automated setup script:
-
-```bash
-# Full setup and run
-./scripts/run_all.sh
-
-# Skip installation if already done
-./scripts/run_all.sh --no-install
-
-# Pass custom arguments
-./scripts/run_all.sh -- --conf 0.5 --images custom/images/
-```
-
-## 🗄️ Database Integration
-
-The system uses MongoDB for persistent storage with separate collections:
-
-### Collections Structure
-
-- **`detections`**: Image detection results
-- **`video_detections`**: Video frame detection results
-
-### Document Schema
-
-**Image Document:**
-```json
-{
-  "name": "image1.jpg",
-  "type": "image",
-  "total_vehicles": 2,
-  "total_riders": 3,
-  "violations": 1,
-  "status": "VIOLATION",
-  "image_path": "/path/to/image1.jpg",
-  "output_path": "/path/to/output/image1.jpg",
-  "timestamp": "2024-01-15T10:30:00.000Z",
-  "processed_at": "2024-01-15T10:30:00.000Z"
-}
-```
-
-**Video Frame Document:**
-```json
-{
-  "name": "frame_000060",
-  "type": "video_frame",
-  "frame_number": 60,
-  "total_vehicles": 1,
-  "total_riders": 2,
-  "violations": 0,
-  "status": "COMPLIANT",
-  "frame_path": "/path/to/frame_000060.jpg",
-  "video_source": "datasets/triple_riding/video/test.mp4",
-  "timestamp": "2024-01-15T10:30:00.000Z",
-  "processed_at": "2024-01-15T10:30:00.000Z"
-}
-```
-
-### Detection Parameters
-
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `--conf` | 0.3 | Detection confidence threshold |
-| `--iou-thresh` | 0.1 | IoU threshold for rider-vehicle grouping |
-| `--dist-thresh` | 0.75 | Distance threshold for rider association |
-| `--frame-interval` | 30 | Process every Nth frame (video only) |
+- **Video Collection (`video_detections`)**
+  - Manages frame-by-frame analysis data
+  - Maintains video source references
+  - Records temporal violation patterns
 
 ## 📊 Reports and Analytics
 
@@ -182,22 +122,36 @@ Generated automatically in output directories with columns:
 - Number of violations
 - Status (VIOLATION/COMPLIANT)
 
-## 🔧 Development
+### Testing Framework
 
-### Running Tests
+#### Image Detection Tests
 ```bash
-# Test image detection
-python detect_triple_riding.py --images datasets/triple_riding/images --quiet
+# Basic detection test
+python detect_triple_riding.py \
+  --images datasets/triple_riding/images \
+  --quiet
 
-# Test video detection
-python detect_video_triple_riding.py --file datasets/triple_riding/video/test.mp4 --quiet
+# Performance testing
+python detect_triple_riding.py \
+  --images datasets/triple_riding/images \
+  --conf 0.5 \
+  --show-confidence
 ```
 
-### Code Structure
-- `detect_triple_riding.py`: Image detection pipeline
-- `detect_video_triple_riding.py`: Video detection pipeline
-- `database.py`: MongoDB integration utilities
-- `scripts/run_all.sh`: Automated setup script
+#### Video Analysis Tests
+```bash
+# Frame extraction test
+python detect_video_triple_riding.py \
+  --file datasets/triple_riding/video/test.mp4 \
+  --frame-interval 30 \
+  --quiet
+
+# Real-time processing test
+python detect_video_triple_riding.py \
+  --file test.mp4 \
+  --show-confidence \
+  --frame-interval 1
+```
 
 ## 🤝 Contributing
 
@@ -211,13 +165,15 @@ python detect_video_triple_riding.py --file datasets/triple_riding/video/test.mp
 
 This project is provided as-is under the MIT License. See LICENSE file for details.
 
-## 📞 Support
+## 📫 Support & Contact
 
-For issues, feature requests, or questions:
-- Open an issue on GitHub
-- Check the MongoDB connection and ensure the service is running
-- Verify file paths and permissions
+### Getting Help
+- [Open an Issue](https://github.com/anshika-ux/Coco_model_triple_riding_detection/issues)
+- [Documentation Wiki](https://github.com/anshika-ux/Coco_model_triple_riding_detection/wiki)
+- Email: [your-email@domain.com]
 
 ---
 
-**Note**: The system uses COCO class indices (person=0, motorbike=3) by default. For custom-trained models with different class mappings, update the class indices in the detection scripts.
+<div align="center">
+Developed with ❤️ for Traffic Safety
+</div>
