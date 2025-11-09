@@ -182,7 +182,7 @@ def annotate_image(image_path: str, vehicle_groups: List[Dict],
         normal_color = (255, 255, 0)   # Yellow
         box_color = violation_color if is_violation else normal_color
 
-        if compact_violation and is_violation:
+        if is_violation:
             xs = [x1, x2]
             ys = [y1, y2]
             for r in riders:
@@ -210,7 +210,7 @@ def annotate_image(image_path: str, vehicle_groups: List[Dict],
                 ay = by1 - 60
                 draw.polygon([(ax, ay), (ax-8, ay+16), (ax+8, ay+16)], fill=violation_color)
 
-        else:
+        elif not is_violation:
             for w in range(3): 
                 draw.rectangle([x1-w, y1-w, x2+w, y2+w], outline=box_color)
 
@@ -223,17 +223,10 @@ def annotate_image(image_path: str, vehicle_groups: List[Dict],
                 ay = y1 - 30
                 draw.polygon([(ax, ay), (ax-6, ay+12), (ax+6, ay+12)], fill=box_color)
 
-            for i, rider in enumerate(riders, 1):
+            for rider in riders:
                 rx1, ry1, rx2, ry2 = map(float, rider["bbox"])
-
                 for w in range(2):
                     draw.rectangle([rx1-w, ry1-w, rx2+w, ry2+w], outline=box_color)
-
-                text = f"Rider {i}"
-                tw = draw.textlength(text, font=label_font)
-                text_bg = [rx1, ry1-30, rx1+tw+8, ry1-5]
-                draw.rectangle(text_bg, fill=box_color)
-                draw.text((rx1+4, ry1-28), text, fill='black', font=label_font)
 
                 v_center = [(x1 + x2)/2, (y1 + y2)/2]
                 r_center = [(rx1 + rx2)/2, (ry1 + ry2)/2]
