@@ -170,7 +170,7 @@ This project is provided as-is under the MIT License. See LICENSE file for detai
 ### Getting Help
 - [Open an Issue](https://github.com/anshika-ux/Coco_model_triple_riding_detection/issues)
 - [Documentation Wiki](https://github.com/anshika-ux/Coco_model_triple_riding_detection/wiki)
-- Email: [your-email@domain.com]
+- Email: [anshikatripathi133@gmail.com]
 
 ---
 
