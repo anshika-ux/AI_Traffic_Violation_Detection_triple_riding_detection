@@ -16,7 +16,6 @@ def find_image_files(folder: Path) -> List[Path]:
 
 
 def compute_iou(box1: np.ndarray, box2: np.ndarray) -> float:
-    """Compute intersection over union between two boxes [x1,y1,x2,y2]."""
     x1 = max(box1[0], box2[0])
     y1 = max(box1[1], box2[1])
     x2 = min(box1[2], box2[2])
@@ -32,7 +31,6 @@ def compute_iou(box1: np.ndarray, box2: np.ndarray) -> float:
 def group_riders_with_vehicles(persons: List[Dict], vehicles: List[Dict], 
                              iou_threshold: float = 0.05, 
                              distance_threshold: float = 0.75) -> List[Dict]:
-    """Group person detections with their likely vehicle using IoU and distance."""
     vehicle_groups = []
     used_persons = set()  # Track assigned riders
     
@@ -106,7 +104,6 @@ def annotate_image(image_path: str, vehicle_groups: List[Dict],
                   show_confidence: bool = False,
                   show_arrow: bool = False,
                   violation_only_box: bool = False) -> None:
-    """Draw violation markers and counts on the image."""
     try:
         # Try multiple methods to open the image
         img = None
@@ -282,7 +279,6 @@ def annotate_image(image_path: str, vehicle_groups: List[Dict],
 
 
 def _color_text(text: str, color: str) -> str:
-    """Return text wrapped with ANSI color codes. color in {'red','green','yellow','cyan','reset'}"""
     colors = {
         'reset': '\033[0m',
         'red': '\033[31m',
