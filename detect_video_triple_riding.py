@@ -214,6 +214,8 @@ def group_riders_with_vehicles(persons: List[Dict], vehicles: List[Dict],
             if len(rider_centers) > 1:
                 centers = np.array(rider_centers)
                 spread = np.max(centers, axis=0) - np.min(centers, axis=0)
+                # Riders must be spread across at least 30% of vehicle width to be considered a real violation
+                # This prevents false positives from riders on different vehicles being grouped together
                 min_spread = v_width * 0.3  
                 is_violation = spread[0] > min_spread or spread[1] > min_spread
 
@@ -606,11 +608,11 @@ if __name__ == "__main__":
             self.file = file_name
             self.weights = "yolov8n.pt"
             self.out = "output video"
-            self.conf = 0.2  
+            self.conf = 0.35  
             self.imgsz = 640
             self.max_det = 300
-            self.iou_thresh = 0.05  
-            self.dist_thresh = 0.5  
+            self.iou_thresh = 0.1  # Increased from 0.05 to prevent false grouping
+            self.dist_thresh = 0.75  # Increased from 0.5 for stricter rider association
             self.frame_interval = 60  
             self.compact_violation = False
             self.show_confidence = False
