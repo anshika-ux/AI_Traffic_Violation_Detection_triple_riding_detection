@@ -1,0 +1,4 @@
+train: images/train
+val: images/val
+names: ['person', 'motorbike']
+nc: 2
