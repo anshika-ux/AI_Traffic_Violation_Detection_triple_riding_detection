@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual envs
+.venv/
+
+# Ultralytics / YOLO runs and outputs
+runs/
+outputs/
+output video*/
+output video test*/
+
+# OS / editor junk
+.DS_Store
+*.swp
+*.tmp
+
+# Large weights and datasets (adjust if you want best.pt tracked)
+*.pt
+datasets 2/
+
