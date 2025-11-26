@@ -1,7 +1,8 @@
 Image Name,Total Vehicles,Total Riders,Triple Riding Violations,Status
 image1.jpg,3,13,2,VIOLATION
-image2.jpg,1,2,0,COMPLIANT
+image2.jpg,1,3,1,VIOLATION
 image3.jpg,1,1,0,COMPLIANT
 image4.jpg,2,6,1,VIOLATION
 image5.jpg,4,7,0,COMPLIANT
 test_image.jpg,0,3,0,COMPLIANT
+testing2.jpeg,2,3,1,VIOLATION
